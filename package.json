@@ -1,0 +1,11 @@
+{
+  "name": "halloween-hotel-website",
+  "version": "1.0.0",
+  "description": "A website for a fictional Halloween-themed hotel.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "George Tupling",
+  "license": "ISC"
+}
