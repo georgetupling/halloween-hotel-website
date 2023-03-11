@@ -13,7 +13,10 @@ app.get("/", async (req, res) => {
     const response = await merchantModel.getMerchants();
     res.status(200).send(response);
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
   }
 });
 
@@ -22,7 +25,10 @@ app.post("/", async (req, res) => {
     const response = await merchantModel.createMerchant(req.body);
     res.status(200).send(response);
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
   }
 });
 
@@ -32,7 +38,10 @@ app.delete("/:id", async (req, res) => {
     const response = await merchantModel.deleteMerchant(id);
     res.status(200).send(response);
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
   }
 });
 

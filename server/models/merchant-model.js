@@ -42,6 +42,8 @@ const deleteMerchant = (id) => {
     pool.query("DELETE FROM merchants WHERE ID = $1", [id], (err, results) => {
       if (err) {
         reject(err);
+      } else if (results.rowCount === 0) {
+        reject(new Error(`Merchant with id ${id} not found.`));
       }
       resolve(`Merchant deleted with id ${id}.`);
     });
