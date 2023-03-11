@@ -8,7 +8,18 @@ const PORT = 3001;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Access-Control-Allow-Headers"
+  );
+  next();
+});
+
 app.get("/", async (req, res) => {
+  console.log("GET request recieved.");
   try {
     const response = await merchantModel.getMerchants();
     res.status(200).send(response);
