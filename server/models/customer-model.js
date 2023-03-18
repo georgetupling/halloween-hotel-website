@@ -1,4 +1,5 @@
 const db = require("../db");
+const bcrypt = require("bcrypt");
 const { camelToSnakeCase } = require("../utils/case-conversion");
 
 const getCustomers = () => {
@@ -14,35 +15,49 @@ const getCustomers = () => {
 };
 
 const createCustomer = (body) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const { fName, lName, gender, dob, phoneNumber, email, password } = body;
     const cleanPhoneNumber = phoneNumber.replace(/\s/g, "");
     const lowerCaseGender = gender.toLowerCase();
+    const lowerCaseEmail = email.toLowerCase();
+    const encryptedPassword = await bcrypt.hash(password, 10);
     db.query(
       "INSERT INTO customers (f_name, l_name, gender, dob, phone_number, email, password) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-      [fName, lName, lowerCaseGender, dob, cleanPhoneNumber, email, password],
+      [
+        fName,
+        lName,
+        lowerCaseGender,
+        dob,
+        cleanPhoneNumber,
+        lowerCaseEmail,
+        encryptedPassword,
+      ],
       (err, results) => {
         if (err) {
           console.error("Error in createCustomer: ", err);
           reject(err);
         }
-        resolve(`A new customer has been created with email ${email}.`);
+        resolve(results.rows[0]);
       }
     );
   });
 };
 
-const getCustomerById = (id) => {
+const getCustomerByEmail = (email) => {
   return new Promise((resolve, reject) => {
-    db.query(`SELECT * FROM customers WHERE id = $1`, [id], (err, results) => {
-      if (err) {
-        console.error("Error in getCustomerById: ", err);
-        reject(err);
-      } else if (results.rowCount === 0) {
-        reject(new Error(`Customer with id ${id} not found.`));
+    db.query(
+      `SELECT * FROM customers WHERE email = $1`,
+      [email.toLowerCase()],
+      (err, results) => {
+        if (err) {
+          console.error("Error in getCustomerByEmail: ", err);
+          reject(err);
+        } else if (results.rowCount === 0) {
+          reject(new Error(`Customer with email ${email} not found.`));
+        }
+        resolve(results.rows[0]);
       }
-      resolve(results.rows);
-    });
+    );
   });
 };
 
@@ -99,7 +114,7 @@ const patchCustomer = (id, body) => {
 module.exports = {
   getCustomers,
   createCustomer,
-  getCustomerById,
+  getCustomerByEmail,
   deleteCustomer,
   patchCustomer,
 };

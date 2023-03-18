@@ -1,16 +1,20 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
+const cookieParser = require("cookie-parser");
 const roomModel = require("./models/room-model");
 
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieParser());
 
 const roomRoutes = require("./routes/room");
-const customerRoutes = require("./routes/customer");
+const registerRoutes = require("./routes/register");
+const loginRoutes = require("./routes/login");
 app.use("/room", roomRoutes);
-app.use("/customer", customerRoutes);
+app.use("/register", registerRoutes);
+app.use("/login", loginRoutes);
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");

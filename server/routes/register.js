@@ -1,21 +1,8 @@
-// Not sure this route needs to exist TBH
-
 const express = require("express");
 const router = express.Router();
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
 const customerModel = require("../models/customer-model");
-
-router.get("/", async (req, res) => {
-  try {
-    const response = await customerModel.getCustomers();
-    res.status(200).send(response);
-  } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
-  }
-});
 
 router.post("/", async (req, res) => {
   try {
@@ -67,43 +54,24 @@ router.post("/", async (req, res) => {
     }
 
     const response = await customerModel.createCustomer(req.body);
-    res.status(200).send(response);
-  } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
-  }
-});
 
-router.get("/:id", async (req, res) => {
-  try {
-    const response = await customerModel.getCustomerById(req.params.id);
-    res.status(200).send(response);
-  } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
-  }
-});
+    const token = jwt.sign(
+      {
+        id: response.id,
+        firstName: response.f_name,
+        lastName: response.l_name,
+        email: response.email,
+      },
+      process.env.TOKEN_KEY,
+      {
+        expiresIn: "2h",
+      }
+    );
 
-router.delete("/:id", async (req, res) => {
-  try {
-    const response = await customerModel.deleteCustomer(req.params.id);
-    res.status(200).send(response);
-  } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
-  }
-});
-
-router.patch("/:id", async (req, res) => {
-  try {
-    const response = await customerModel.patchCustomer(req.params.id, req.body);
-    res.status(200).send(response);
+    res.cookie("token", token, { httpOnly: true });
+    res
+      .status(200)
+      .json({ status: "ok", message: "user registered successfully" });
   } catch (err) {
     res.status(500).json({
       status: "error",
