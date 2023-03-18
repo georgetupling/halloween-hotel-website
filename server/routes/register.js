@@ -68,7 +68,7 @@ router.post("/", async (req, res) => {
       }
     );
 
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, { httpOnly: true, domain: "localhost" });
     res
       .status(200)
       .json({ status: "ok", message: "user registered successfully" });

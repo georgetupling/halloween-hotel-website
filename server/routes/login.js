@@ -24,6 +24,8 @@ router.post("/", async (req, res) => {
       throw new Error("User not found");
     }
 
+    console.log(`login.js: foundUser.password=${foundUser.password}`);
+
     const isCorrectPassword = await bcrypt.compare(
       password,
       foundUser.password
@@ -45,9 +47,10 @@ router.post("/", async (req, res) => {
       }
     );
 
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, { httpOnly: true, domain: "localhost" });
     res.status(200).json({ status: "ok", message: "logged in successfully" });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       status: "error",
       message: err.message,
