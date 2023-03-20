@@ -6,6 +6,9 @@ import ErrorPage from "./pages/ErrorPage";
 import LogIn from "./pages/LogIn";
 import Register from "./pages/Register";
 import MenuAppBar from "./components/MenuAppBar";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/en-gb";
 
 const router = createBrowserRouter([
   {
@@ -25,13 +28,19 @@ const router = createBrowserRouter([
   },
 ]);
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <MenuAppBar />
-      <RouterProvider router={router} />
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+        <MenuAppBar />
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </ThemeProvider>
   );
 }
